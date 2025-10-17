@@ -30,7 +30,6 @@ struct PaywallView: View {
             
             VStack {
                 Spacer(minLength: 0)
-                Spacer(minLength: 0)
                 
                 ZStack {
                     GeometryReader { geo in
@@ -52,37 +51,32 @@ struct PaywallView: View {
                     }
                     .frame(height: 300.fitH)
                 }
-                .overlay(alignment: .topLeading) {
-                    Image(.genIcon)
+     
+                Spacer(minLength: 10)
+                
+                VStack {
+                    Image(.text)
                         .resizable()
-                        .frame(width: 18, height: 18)
-                        .padding(.leading, 70.fitW)
-                        .offset(y: -10)
+                        .frame(width: 276.fitW, height: 114.fitH)
                 }
-                .overlay(alignment: .top) {
-                    Image(.genIcon)
-                        .resizable()
-                        .frame(width: 35, height: 35)
-                        .padding(.leading, 80.fitW)
-                        .offset(y: -20)
-                }
+                .frame(maxWidth: .infinity)
                 .overlay(alignment: .bottomLeading) {
                     Image(.genIcon)
                         .resizable()
-                        .frame(width: 15, height: 15)
-                        .padding(.leading, 120.fitW)
-                        .offset(y: 10)
+                        .frame(width: 18, height: 18)
+                        .padding(.leading, 13.fitW)
+                        .offset(y: -10)
                 }
-                .overlay(alignment: .bottomTrailing) {
+                .overlay(alignment: .topTrailing) {
                     Image(.genIcon)
                         .resizable()
                         .frame(width: 25, height: 25)
-                        .padding(.trailing, 60.fitW)
-                        .offset(y: -50)
+                        .padding(.trailing, 6.fitW)
+                        .offset(y: 10)
                 }
-                Spacer(minLength: 10)
                 
-                
+                Spacer(minLength: 0)
+
                 
                 bottomButtonFirst
             }
@@ -108,7 +102,7 @@ struct PaywallView: View {
                  )
              } else {
                  return Alert(
-                     title: Text("Oops"),
+                     title: Text("Purchase failed"),
                      message: Text(alert.message),
                      dismissButton: .default(Text("OK")) {
                          viewModel.alert = nil

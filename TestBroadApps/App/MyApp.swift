@@ -6,12 +6,16 @@
 //
 
 import SwiftUI
+import AppTrackingTransparency
+import AdSupport
+import ApphudSDK
 
 @main
 struct MyApp: App {
     
     private let services = ServiceLayer()
-    
+    @Environment(\.scenePhase) var scenePhase
+
     init() {
         NotificationService.shared.configure()
         ApphudUserManager.shared.configure()
@@ -34,6 +38,22 @@ struct MyApp: App {
                         }
                     }
                 }
+                .onChange(of: scenePhase) {
+                    if scenePhase == .active {
+                        ATTrackingManager.requestTrackingAuthorization { status in
+                            switch status {
+                            case .authorized:
+                                let idfa = ASIdentifierManager.shared().advertisingIdentifier
+                                Apphud.setDeviceIdentifiers(idfa: idfa.uuidString, idfv: UIDevice.current.identifierForVendor?.uuidString)
+                            case .denied, .restricted, .notDetermined:
+                                print("IDFA authorization not granted")
+                            @unknown default:
+                                break
+                            }
+                        }
+                    }
+                }
+            
         }
     }
 }

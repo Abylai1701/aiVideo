@@ -49,13 +49,22 @@ final class PurchaseManager: ObservableObject {
         _ = await Apphud.fetchSKProducts()
         let paywalls = await Apphud.fetchPaywallsWithFallback()
         
-        guard let main = paywalls.first else {
-            print("❌ Нет Apphud paywall")
+        guard !paywalls.isEmpty else {
+            print("❌ Нет Apphud paywalls")
             return
         }
-        
-        subscriptions = main.products.filter { subscriptionIDs.contains($0.productId) }
-        
+
+        // Собираем продукты из всех paywalls
+        let allProducts = paywalls.flatMap { $0.products }
+
+        // Фильтруем по категориям
+        let subs = allProducts.filter { subscriptionIDs.contains($0.productId) }
+        let tokens = allProducts.filter { tokenIDs.contains($0.productId) }
+        let avatars = allProducts.filter { avatarIDs.contains($0.productId) }
+
+        // Если тебе нужно всё в одном массиве
+        subscriptions = subs + tokens + avatars
+
         print("✅ Apphud Subscriptions:")
         for s in subscriptions {
             print("• \(s.productId) \(s.localizedPrice)")
@@ -127,6 +136,7 @@ extension Apphud {
         // 2️⃣ Слушаем, когда Apphud загрузит paywalls
         let remote: [ApphudPaywall] = await withCheckedContinuation { continuation in
             Apphud.paywallsDidLoadCallback { paywalls, _ in
+                print("Вот мои paywalls: \(paywalls)")
                 continuation.resume(returning: paywalls)
             }
         }
@@ -139,6 +149,7 @@ extension Apphud {
         // 4️⃣ Иначе пробуем fallback (локальный кэш или встроенные)
         let fallback: [ApphudPaywall] = await withCheckedContinuation { continuation in
             Apphud.loadFallbackPaywalls { paywalls, _ in
+                print("Вот мои local paywalls: \(paywalls)")
                 continuation.resume(returning: paywalls ?? [])
             }
         }
@@ -146,3 +157,4 @@ extension Apphud {
         return fallback
     }
 }
+

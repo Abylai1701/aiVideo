@@ -22,6 +22,8 @@
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app saves generated photos to your photo library.</string>
+    <key>NSUserTrackingUsageDescription</key>
+    <string>We use your ID for advertising purposes.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>InterTight-Medium.ttf</string>
