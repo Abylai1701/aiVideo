@@ -22,8 +22,9 @@ struct RateAppView: View {
                 .padding(.bottom, 12)
 
             VStack(spacing: .zero) {
-                Text("Do you like our app?")
+                Text("Would you like to rate our app?")
                     .font(.interSemiBold(size: 26))
+                    .multilineTextAlignment(.center)
                     .foregroundStyle(.orangeF86B0D)
                     .padding(.bottom)
                 
@@ -43,7 +44,7 @@ struct RateAppView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .overlay {
-                    Text("No")
+                    Text("Later")
                         .font(.interMedium(size: 15))
                         .foregroundStyle(.black101010)
                 }
@@ -58,7 +59,7 @@ struct RateAppView: View {
                 .frame(maxWidth: .infinity)
                 .frame(height: 44)
                 .overlay {
-                    Text("Yes")
+                    Text("Rate now")
                         .font(.interMedium(size: 16))
                         .foregroundStyle(.white)
                 }
@@ -101,7 +102,6 @@ struct RateAppView: View {
          if let scene = UIApplication.shared.connectedScenes
              .compactMap({ $0 as? UIWindowScene })
              .first(where: { $0.activationState == .foregroundActive }) {
-             // Системный нативный алерт (iOS сама решит, показывать или нет)
              SKStoreReviewController.requestReview(in: scene)
          }
      }
