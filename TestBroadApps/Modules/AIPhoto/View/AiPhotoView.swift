@@ -60,7 +60,6 @@ struct AiPhotoView: View {
                 .zIndex(9)
                 .transition(.move(edge: .bottom))
             }
-            
         }
         .animation(.easeInOut(duration: 0.3), value: viewModel.step)
         .sheet(item: $sharePayload) { payload in

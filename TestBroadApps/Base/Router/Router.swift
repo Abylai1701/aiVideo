@@ -15,16 +15,28 @@ enum AppRoute: Hashable {
     case rateApp
 }
 
+enum GlobalOverlay: Equatable {
+    case none
+    case chatSidebar
+}
+
 @MainActor
 final class Router: ObservableObject {
-    @Published var selectedTab: Tab = .effects
+    @Published var selectedTab: Tab = .samples
     @Published var isTabBarHidden: Bool = false
+    @Published var isSlideBarShown: Bool = false
 
     @Published var effectsPath = NavigationPath()
     @Published var aiPhotoPath = NavigationPath()
     @Published var historyPath = NavigationPath()
     @Published var settingsPath = NavigationPath()
 
+    // ГЛОБАЛЬНЫЕ ОВЕРЛЕИ
+    @Published var overlay: GlobalOverlay = .none
+    func present(_ overlay: GlobalOverlay) { withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) { self.overlay = overlay } }
+    func dismissOverlay() { withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) { self.overlay = .none } }
+
+    
     var avatarVM: CreateAvatarViewModel?
     
     // MARK: - Навигация
@@ -32,8 +44,8 @@ final class Router: ObservableObject {
         withAnimation(.easeInOut) { isTabBarHidden = true }
 
         switch tab ?? selectedTab {
-        case .effects: effectsPath.append(route)
-        case .aiPhoto: aiPhotoPath.append(route)
+        case .samples: effectsPath.append(route)
+        case .chat: aiPhotoPath.append(route)
         case .history: historyPath.append(route)
         case .settings: settingsPath.append(route)
         }
@@ -41,8 +53,8 @@ final class Router: ObservableObject {
 
     func pop(in tab: Tab? = nil) {
         switch tab ?? selectedTab {
-        case .effects: if !effectsPath.isEmpty { effectsPath.removeLast() }
-        case .aiPhoto: if !aiPhotoPath.isEmpty { aiPhotoPath.removeLast() }
+        case .samples: if !effectsPath.isEmpty { effectsPath.removeLast() }
+        case .chat: if !aiPhotoPath.isEmpty { aiPhotoPath.removeLast() }
         case .history: if !historyPath.isEmpty { historyPath.removeLast() }
         case .settings: if !settingsPath.isEmpty { settingsPath.removeLast() }
         }
@@ -57,10 +69,10 @@ final class Router: ObservableObject {
         withAnimation(.easeInOut) { isTabBarHidden = false }
 
         switch tab ?? selectedTab {
-        case .effects: effectsPath.removeLast(effectsPath.count)
-        case .aiPhoto:
+        case .samples: effectsPath.removeLast(effectsPath.count)
+        case .chat:
             aiPhotoPath.removeLast(aiPhotoPath.count)
-            selectedTab = .effects
+            selectedTab = .samples
         case .history: historyPath.removeLast(historyPath.count)
         case .settings: settingsPath.removeLast(settingsPath.count)
         }

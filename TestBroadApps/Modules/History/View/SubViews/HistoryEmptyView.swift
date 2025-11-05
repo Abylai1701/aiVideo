@@ -37,10 +37,10 @@ struct HistoryEmptyView: View {
                     tapToEffects()
                 } label: {
                     RoundedRectangle(cornerRadius: 24)
-                        .fill(.black101010)
+                        .fill(.orangeF86B0D)
                         .frame(width: 240.fitW, height: 44.fitW)
                         .overlay {
-                            Text("It's empty now")
+                            Text("To the generations")
                                 .font(.interMedium(size: 16))
                                 .foregroundStyle(.white)
                         }

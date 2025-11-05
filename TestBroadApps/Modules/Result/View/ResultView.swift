@@ -20,11 +20,33 @@ struct ResultView: View {
                 
                 Spacer()
                 
-                KFImage(URL(string: viewModel.result ?? ""))
-                    .resizable()
-                    .scaledToFit()
-                    .padding(.horizontal)
-                    .padding(.bottom)
+                if let result = viewModel.result, !result.isEmpty {
+                    if result.starts(with: "http") {
+                        // 🌐 сетевой URL
+                        KFImage(URL(string: result))
+                            .resizable()
+                            .scaledToFit()
+                            .padding(.horizontal)
+                            .padding(.bottom)
+                    } else {
+                        // 📁 локальный файл
+                        if let image = UIImage(contentsOfFile: result) {
+                            Image(uiImage: image)
+                                .resizable()
+                                .scaledToFit()
+                                .padding(.horizontal)
+                                .padding(.bottom)
+                        } else {
+                            Text("⚠️ Unable to load image")
+                                .foregroundColor(.gray)
+                                .padding()
+                        }
+                    }
+                } else {
+                    Text("⚠️ No image found")
+                        .foregroundColor(.gray)
+                        .padding()
+                }
                 
                 Spacer()
                 
@@ -46,7 +68,9 @@ struct ResultView: View {
     }
     
     private var header: some View {
-        HStack {
+        let isLocal = !(viewModel.result?.starts(with: "http") ?? false)
+        
+        return HStack {
             Image(.backIcon)
                 .resizable()
                 .frame(width: 48.fitW, height: 48.fitW)
@@ -54,13 +78,14 @@ struct ResultView: View {
             Spacer()
         }
         .overlay {
-            Text("Effects")
+            Text(isLocal ? "Image" : "Effects")
                 .font(.interSemiBold(size: 18))
                 .foregroundStyle(.black101010)
         }
         .padding(.horizontal)
         .padding(.bottom)
     }
+
     
     private var resultButtons: some View {
         VStack(spacing: 8) {
@@ -92,28 +117,32 @@ struct ResultView: View {
                 .onTapGesture {
                     Task {
                         guard let image = await viewModel.downloadImage() else { return }
-                        
-                        if let data = image.jpegData(compressionQuality: 0.95) {
-                            let url = FileManager.default.temporaryDirectory
-                                .appendingPathComponent("effect-\(UUID().uuidString).jpg")
-                            do {
-                                try data.write(to: url, options: .atomic)
-                                await MainActor.run {
-                                    sharePayload = SharePayload(items: [url])
-                                }
-                                return
-                            } catch {
-                                print("⚠️ write temp failed:", error.localizedDescription)
-                            }
-                        }
-                        await MainActor.run {
-                            sharePayload = SharePayload(items: [image])
-                        }
+                        await share(image)
                     }
                 }
         }
     }
     
+    
+    // MARK: - Share logic
+    private func share(_ image: UIImage) async {
+        if let data = image.jpegData(compressionQuality: 0.95) {
+            let url = FileManager.default.temporaryDirectory
+                .appendingPathComponent("effect-\(UUID().uuidString).jpg")
+            do {
+                try data.write(to: url, options: .atomic)
+                await MainActor.run {
+                    sharePayload = SharePayload(items: [url])
+                }
+                return
+            } catch {
+                print("⚠️ write temp failed:", error.localizedDescription)
+            }
+        }
+        await MainActor.run {
+            sharePayload = SharePayload(items: [image])
+        }
+    }
     @ViewBuilder
     private var alertView: some View {
         switch viewModel.showAlert {

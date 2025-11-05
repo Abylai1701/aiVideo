@@ -59,8 +59,16 @@ struct SubscriptionOptionView: View {
         }
         .padding(.vertical, (discountText != nil) ? 8 : 12)
         .padding(.horizontal, 12)
-        .background(.grayF5F5F5)
+        .background(
+            RoundedRectangle(cornerRadius: 16)
+                .fill(Color.grayF5F5F5)
+                .overlay(
+                    RoundedRectangle(cornerRadius: 16)
+                        .stroke(isSelected ? Color.orangeF86B0D : Color.grayF5F5F5, lineWidth: isSelected ? 2 : 1)
+                )
+                .shadow(color: .black.opacity(0.05), radius: 2, x: 0, y: 1)
+        )
+//        .background(.grayF5F5F5)
         .clipShape(RoundedRectangle(cornerRadius: 16))
     }
 }
-

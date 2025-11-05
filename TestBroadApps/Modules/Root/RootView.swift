@@ -16,11 +16,12 @@ struct RootView: View {
     @StateObject private var effectsViewModel: EffectsViewModel
     @StateObject private var historyViewModel: HistoryViewModel
     @StateObject private var settingsViewModel: SettingsViewModel
-    @StateObject private var aiPhotoViewModel: AiPhotoViewModel
+    @StateObject private var chatViewModel: ChatViewModel
     
     @AppStorage("onboardingСompleted") private var onboardingCompleted = false
     @State private var showOnboarding = false
-    
+    @State private var isSidebarOpen = false
+
     // MARK: - Init
     init(services: ServiceLayer) {
         self.services = services
@@ -39,8 +40,8 @@ struct RootView: View {
         _settingsViewModel = StateObject(
             wrappedValue: SettingsViewModel(router: router)
         )
-        _aiPhotoViewModel = StateObject(
-            wrappedValue: AiPhotoViewModel(router: router)
+        _chatViewModel = StateObject(
+            wrappedValue: ChatViewModel(router: router)
         )
     }
     
@@ -49,7 +50,7 @@ struct RootView: View {
             if onboardingCompleted {
                 Group {
                     switch router.selectedTab {
-                    case .effects:
+                    case .samples:
                         NavigationStack(path: $router.effectsPath) {
                             EffectsView(viewModel: effectsViewModel)
                                 .navigationDestination(for: AppRoute.self) { route in
@@ -57,15 +58,16 @@ struct RootView: View {
                                 }
                         }
                         
-                    case .aiPhoto:
+                    case .chat:
                         NavigationStack(path: $router.aiPhotoPath) {
-                            AiPhotoView(viewModel: aiPhotoViewModel)
-                                .navigationDestination(for: AppRoute.self) { route in
-                                    router.destination(for: route)
-                                }
-                                .task {
-                                    withAnimation(.easeInOut) { router.isTabBarHidden = true }
-                                }
+                            ChatView(viewModel: chatViewModel) {
+                                router.present(.chatSidebar)
+                                isSidebarOpen = true
+                                
+                            }
+                            .navigationDestination(for: AppRoute.self) { route in
+                                router.destination(for: route)
+                            }
                         }
                         
                     case .history:
@@ -95,13 +97,38 @@ struct RootView: View {
                         .transition(.move(edge: .bottom).combined(with: .opacity))
                         .zIndex(1)
                 }
+                
+                Color.black
+                    .opacity(isSidebarOpen ? 0.6 : 0)
+                    .ignoresSafeArea()
+                    .animation(.easeInOut(duration: 0.25), value: isSidebarOpen)
+                    .onTapGesture {
+                        withAnimation(.spring(response: 0.35, dampingFraction: 0.85)) {
+                            router.dismissOverlay()
+                            isSidebarOpen = false
+                        }
+                    }
+                    .zIndex(3)
+
+                Group {
+                    switch router.overlay {
+                    case .none:
+                        EmptyView()
+                        
+                    case .chatSidebar:
+                        ChatSidebarOverlay(viewModel: chatViewModel) {
+                            isSidebarOpen = false
+                        }
+                    }
+                }
+                .zIndex(9999)
+                .transition(.move(edge: .leading))
+                
             } else {
                 OnboardingView {
                     onboardingCompleted = true
                     withAnimation(.easeInOut) {
                         showOnboarding = false
-//                        router.isTabBarHidden = false
-//                        router.selectedTab = .effects
                     }
                 }
             }
@@ -109,6 +136,8 @@ struct RootView: View {
         .onAppear {
             observeNotificationTap()
         }
+        .environmentObject(router)
+        .ignoresSafeArea(.keyboard)
     }
     
     private func observeNotificationTap() {

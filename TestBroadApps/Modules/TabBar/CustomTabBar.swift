@@ -9,15 +9,15 @@ import Foundation
 import SwiftUI
 
 enum Tab: Hashable {
-    case effects
-    case aiPhoto
+    case chat
+    case samples
     case history
     case settings
     
     var title: String {
         switch self {
-        case .effects: "Effects"
-        case .aiPhoto: "Ai photo"
+        case .samples: "Samples"
+        case .chat: "Chat"
         case .history: "History"
         case .settings: "Settings"
         }
@@ -25,16 +25,16 @@ enum Tab: Hashable {
     
     var selectedIcon: ImageResource {
         switch self {
-        case .effects: .effectsTab
-        case .aiPhoto: .aiPhotoTab
+        case .samples: .samplesTab
+        case .chat: .chatTab
         case .history: .historyTab
         case .settings: .settingsTab
         }
     }
     var unselectedIcon: ImageResource {
         switch self {
-        case .effects: .effectsUnTab
-        case .aiPhoto: .aiPhotoUnTab
+        case .samples: .samplesUnTab
+        case .chat: .chatUnTab
         case .history: .historyUnTab
         case .settings: .settingsUnTab
         }
@@ -51,7 +51,7 @@ struct CustomTabBar: View {
                 .opacity(0.1)
             
             HStack {
-                ForEach([Tab.effects, .aiPhoto, .history, .settings], id: \.self) { tab in
+                ForEach([Tab.chat, .samples, .history, .settings], id: \.self) { tab in
                     Spacer()
                     VStack(spacing: 8) {
                         Image(router.selectedTab == tab ? tab.unselectedIcon : tab.selectedIcon)

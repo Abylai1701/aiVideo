@@ -18,7 +18,7 @@ struct RateAppView: View {
 
             Image(.bigHeartIcon)
                 .resizable()
-                .frame(maxWidth: 240.fitW, maxHeight: 240.fitW)
+                .frame(maxWidth: 278.fitW, maxHeight: 278.fitW)
                 .padding(.bottom, 12)
 
             VStack(spacing: .zero) {

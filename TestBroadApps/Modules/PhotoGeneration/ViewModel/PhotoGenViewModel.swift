@@ -171,9 +171,9 @@ final class PhotoGenViewModel: ObservableObject {
         }
     }
 
-    func checkTokens() async -> Bool{
+    func checkTokens() async -> Bool {
         await fetchUserInfo()
-        if tokensCount <= 0 { // FIX
+        if tokensCount <= 0 {
             return false
         } else {
             return true

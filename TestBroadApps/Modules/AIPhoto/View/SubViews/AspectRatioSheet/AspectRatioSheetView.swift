@@ -27,7 +27,6 @@ struct AspectRatioSheetView: View {
                     ForEach(AspectRatioType.allCases, id: \.self) { ratio in
                         Button {
                             selectedAspect = ratio
-                            dismiss()
                         } label: {
                             HStack(spacing: 8) {
                                 Image(ratio.image)
@@ -38,22 +37,27 @@ struct AspectRatioSheetView: View {
                                 Text(ratio.value)
                                     .font(.interMedium(size: 15))
                                     .foregroundStyle(.black101010)
-                                    
+                                
                             }
                             .frame(maxWidth: .infinity, minHeight: 44)
                             .background(
                                 RoundedRectangle(cornerRadius: 22)
                                     .fill(Color.grayF5F5F5)
                             )
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 22)
+                                    .stroke(selectedAspect == ratio ? Color.orangeF86B0D : .clear, lineWidth: 2)
+                            )
                         }
                         .buttonStyle(.plain)
                     }
                 }
                 .padding(.horizontal, 16)
+                .padding(.top, 4)
             }
             .scrollDisabled(true)
         }
-        .frame(height: 266)
+        .frame(height: 200)
         .background(Color.white)
         .clipShape(RoundedRectangle(cornerRadius: 40))
     }

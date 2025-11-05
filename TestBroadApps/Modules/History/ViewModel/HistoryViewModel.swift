@@ -89,7 +89,7 @@ final class HistoryViewModel: ObservableObject {
     
     @MainActor
     func effectsTap() {
-        router.selectedTab = .effects
+        router.selectedTab = .samples
     }
     
     @MainActor

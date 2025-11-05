@@ -26,35 +26,40 @@ final class ResultViewModel: ObservableObject {
         router.pop()
     }
     
-    func download() async {
-        guard let urlString = result, let url = URL(string: urlString) else {
-            print("❌ Invalid image URL")
-            return
-        }
-        
-        do {
-            let image = try await KingfisherManager.shared.retrieveImage(with: url).image
-            
-            UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
-            print("✅ Image saved to Photos")
-            showAlert = .save
-            
-        } catch {
-            print("❌ Failed to download image:", error.localizedDescription)
-            showAlert = .failed
-
-        }
-    }
-    
-    func downloadImage() async -> UIImage? {
-        guard let urlString = result,
-              let url = URL(string: urlString) else { return nil }
-        do {
-            let image = try await KingfisherManager.shared.retrieveImage(with: url).image
-            return image
-        } catch {
-            print("❌ Failed to get image for share:", error.localizedDescription)
-            return nil
-        }
-    }
+    func loadUIImage() async -> UIImage? {
+         guard let result, !result.isEmpty else { return nil }
+         
+         if result.starts(with: "http") {
+             // 🌐 сетевой URL
+             guard let url = URL(string: result) else { return nil }
+             do {
+                 let image = try await KingfisherManager.shared.retrieveImage(with: url).image
+                 return image
+             } catch {
+                 print("❌ Failed to load from network:", error.localizedDescription)
+                 return nil
+             }
+         } else {
+             // 📁 локальный путь
+             return UIImage(contentsOfFile: result)
+         }
+     }
+     
+     // MARK: - Download (Save to Photos)
+     func download() async {
+         guard let image = await loadUIImage() else {
+             showAlert = .failed
+             print("❌ No image to save")
+             return
+         }
+         
+         UIImageWriteToSavedPhotosAlbum(image, nil, nil, nil)
+         showAlert = .save
+         print("✅ Image saved to Photos")
+     }
+     
+     // MARK: - Download for Share
+     func downloadImage() async -> UIImage? {
+         await loadUIImage()
+     }
 }

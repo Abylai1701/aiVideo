@@ -24,34 +24,20 @@ struct PaywallView: View {
     private let images: [ImageResource] = [.pw1, .pw2, .pw3, .pw4]
     
     var body: some View {
-        ZStack(alignment: .bottom) {
-            Color.orangeF86B0D
+        ZStack(alignment: .top) {
+
+            Image(.human)
+                .resizable()
+                .frame(width: UIScreen.main.bounds.width, height: 600.fitH)
                 .ignoresSafeArea()
             
             VStack {
                 Spacer(minLength: 0)
-                
-                ZStack {
-                    GeometryReader { geo in
-                        let width = geo.size.width
-                        
-                        HStack(spacing: 0) {
-                            ForEach(Array((images + images).enumerated()), id: \.offset) { index, name in
-                                Image(name)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: width * 0.5)
-                                    .padding(.horizontal, 8)
-                            }
-                        }
-                        .offset(x: offset)
-                        .onAppear {
-                            startInfiniteScroll(totalWidth: width * 0.7 * CGFloat(images.count))
-                        }
-                    }
-                    .frame(height: 300.fitH)
-                }
-     
+                Spacer(minLength: 0)
+                Spacer(minLength: 0)
+                Spacer(minLength: 0)
+                Spacer(minLength: 0)
+                     
                 Spacer(minLength: 10)
                 
                 VStack {

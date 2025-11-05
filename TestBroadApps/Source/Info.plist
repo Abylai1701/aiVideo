@@ -24,6 +24,8 @@
 	<string>This app saves generated photos to your photo library.</string>
     <key>NSUserTrackingUsageDescription</key>
     <string>We use your ID for advertising purposes.</string>
+    <key>NSCameraUsageDescription</key>
+    <string>We need access to the camera so you can take photos and use them in the chat.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>InterTight-Medium.ttf</string>
