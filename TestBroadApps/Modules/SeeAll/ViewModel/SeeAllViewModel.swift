@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import ApphudSDK
 
 @MainActor
 final class SeeAllViewModel: ObservableObject {
@@ -25,7 +26,7 @@ final class SeeAllViewModel: ObservableObject {
     }
     
     func effectTap(on item: Template) {
-        if PurchaseManager.shared.isSubscribed {
+        if Apphud.hasPremiumAccess() {
             let url = item.preview
             router.push(.photoGen(url, item.promptTemplate, item.id))
         } else {

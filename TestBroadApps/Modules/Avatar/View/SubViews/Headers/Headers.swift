@@ -129,22 +129,25 @@ struct HeaderForGeneration: View {
                 .font(.interSemiBold(size: 18))
                 .foregroundStyle(.black101010)
             
-            Spacer()
-
-            RoundedRectangle(cornerRadius: 24)
-                .fill(.purple892FFF)
-                .frame(width: 67, height: 40)
-                .overlay {
-                    HStack {
-                        Image(.whiteAvatarIcon)
-                            .resizable()
-                            .frame(width: 20, height: 20)
-                        
-                        Text("\(countOfAvatars)")
-                            .font(.interMedium(size: 16))
-                            .foregroundStyle(.white)
-                    }
-                }
+            Spacer(minLength: 0)
+            
+            HStack(spacing: 4) {
+                Image(.generateIcon)
+                    .resizable()
+                    .frame(width: 20, height: 20)
+                
+                Text("\(countOfAvatars)")
+                    .font(.interMedium(size: 16))
+                    .foregroundStyle(.white)
+                    .lineLimit(1)
+                    .minimumScaleFactor(0.7)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background(
+                RoundedRectangle(cornerRadius: 24)
+                    .fill(.purple892FFF)
+            )
         }
         .frame(maxWidth: .infinity)
         .padding(.horizontal)

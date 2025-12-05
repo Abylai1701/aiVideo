@@ -55,6 +55,15 @@ final class SettingsViewModel: ObservableObject {
     }
     
     @MainActor
+    func fetchAvatars() {
+        Task.detached(priority: .background) {
+            let responce = try await self.fetchUserAvatars()
+            await MainActor.run {
+                self.avatars = responce
+            }
+        }
+    }
+    @MainActor
     func pushToCreateAvatar() {
         router.push(.createAvatar)
     }
@@ -137,7 +146,7 @@ extension SettingsViewModel {
                 )
             }
             
-            print("✅ Updated avatar preview:", response)
+            print("✅ Updated avatar preview")
             
             if let _ = response.first {
                 Task {

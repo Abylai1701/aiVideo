@@ -52,14 +52,25 @@ final class Router: ObservableObject {
     }
 
     func pop(in tab: Tab? = nil) {
-        switch tab ?? selectedTab {
-        case .samples: if !effectsPath.isEmpty { effectsPath.removeLast() }
-        case .chat: if !aiPhotoPath.isEmpty { aiPhotoPath.removeLast() }
-        case .history: if !historyPath.isEmpty { historyPath.removeLast() }
-        case .settings: if !settingsPath.isEmpty { settingsPath.removeLast() }
+        let currentTab = tab ?? selectedTab
+        var pathIsEmpty = false
+        
+        switch currentTab {
+        case .samples: 
+            if !effectsPath.isEmpty { effectsPath.removeLast() }
+            pathIsEmpty = effectsPath.isEmpty
+        case .chat: 
+            if !aiPhotoPath.isEmpty { aiPhotoPath.removeLast() }
+            pathIsEmpty = aiPhotoPath.isEmpty
+        case .history: 
+            if !historyPath.isEmpty { historyPath.removeLast() }
+            pathIsEmpty = historyPath.isEmpty
+        case .settings: 
+            if !settingsPath.isEmpty { settingsPath.removeLast() }
+            pathIsEmpty = settingsPath.isEmpty
         }
         
-        if allPathsAreEmpty() {
+        if pathIsEmpty {
             withAnimation(.easeInOut) { isTabBarHidden = false }
         }
     }
@@ -75,6 +86,20 @@ final class Router: ObservableObject {
             selectedTab = .samples
         case .history: historyPath.removeLast(historyPath.count)
         case .settings: settingsPath.removeLast(settingsPath.count)
+        }
+    }
+    
+    func updateTabBarVisibility() {
+        let pathIsEmpty: Bool
+        switch selectedTab {
+        case .samples: pathIsEmpty = effectsPath.isEmpty
+        case .chat: pathIsEmpty = aiPhotoPath.isEmpty
+        case .history: pathIsEmpty = historyPath.isEmpty
+        case .settings: pathIsEmpty = settingsPath.isEmpty
+        }
+        
+        if pathIsEmpty {
+            withAnimation(.easeInOut) { isTabBarHidden = false }
         }
     }
     

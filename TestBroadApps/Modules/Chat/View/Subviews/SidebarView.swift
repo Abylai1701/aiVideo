@@ -33,6 +33,7 @@ struct ChatSidebarOverlay: View {
 
 
 import SwiftUI
+import ApphudSDK
 
 struct SidebarView: View {
     @ObservedObject var viewModel: ChatViewModel
@@ -127,7 +128,7 @@ struct SidebarView: View {
 
             Spacer()
 
-            if !PurchaseManager.shared.isSubscribed {
+            if !Apphud.hasPremiumAccess() {
                 VStack(spacing: 0) {
                     Divider()
                         .padding(.horizontal)

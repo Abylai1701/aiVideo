@@ -23,23 +23,25 @@ struct HistoryView: View {
                         .font(.interSemiBold(size: 22))
                         .foregroundStyle(.black101010)
                     
-                    Spacer()
+                    Spacer(minLength: 0)
                     
-                    
-                    RoundedRectangle(cornerRadius: 24)
-                        .fill(.orangeF86B0D)
-                        .frame(width: 67, height: 40)
-                        .overlay {
-                            HStack {
-                                Image(.generateIcon)
-                                    .resizable()
-                                    .frame(width: 20, height: 20)
-                                
-                                Text("\(viewModel.tokensCount)")
-                                    .font(.interMedium(size: 16))
-                                    .foregroundStyle(.white)
-                            }
-                        }
+                    HStack(spacing: 4) {
+                        Image(.generateIcon)
+                            .resizable()
+                            .frame(width: 20, height: 20)
+                        
+                        Text("\(viewModel.tokensCount)")
+                            .font(.interMedium(size: 16))
+                            .foregroundStyle(.white)
+                            .lineLimit(1)
+                            .minimumScaleFactor(0.7)
+                    }
+                    .padding(.horizontal, 12)
+                    .padding(.vertical, 12)
+                    .background(
+                        RoundedRectangle(cornerRadius: 24)
+                            .fill(.orangeF86B0D)
+                    )
                     
                 }
                 .padding(.horizontal)

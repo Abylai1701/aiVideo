@@ -166,6 +166,7 @@ final class CreateAvatarViewModel: ObservableObject {
             await MainActor.run {
                 step = .photoUpload
                 showAlert = .error
+                print(error)
             }
         }
         
@@ -237,7 +238,7 @@ final class CreateAvatarViewModel: ObservableObject {
         return try await network.get(url: url, headers: headers)
     }
     
-    func checkTokens() async -> Bool{
+    func checkTokens() async -> Bool {
         await fetchUserInfo()
         if avatarTokens <= 0 {
             return false

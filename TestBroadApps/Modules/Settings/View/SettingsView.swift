@@ -8,6 +8,7 @@
 import SwiftUI
 import Kingfisher
 import PhotosUI
+import ApphudSDK
 
 struct SettingsView: View {
     @ObservedObject var viewModel: SettingsViewModel
@@ -22,12 +23,11 @@ struct SettingsView: View {
     @State private var showPhotoPicker = false
     @State private var selectedPhotoItem: PhotosPickerItem?
     
-    @State private var showWebView = false
-    @State private var webTitle = ""
-    @State private var webURL: URL? = nil
-    
     @State private var showAlert = false
     @State private var showPaywall = false
+    
+    @State private var showPolicy = false
+    @State private var showTerms = false
     
     var body: some View {
         content
@@ -122,11 +122,7 @@ struct SettingsView: View {
             .onAppear {
                 Task {
                     await viewModel.fetchUserInfo()
-                }
-            }
-            .fullScreenCover(isPresented: $showWebView) {
-                if let webURL {
-                    SafariWebView(url: webURL)
+                    viewModel.fetchAvatars()
                 }
             }
             .alert(isPresented: $showAlert) {
@@ -139,6 +135,8 @@ struct SettingsView: View {
             .fullScreenCover(isPresented: $showPaywall) {
                 PaywallView()
             }
+            .safari(urlString: "https://docs.google.com/document/d/17e4wZQqOWohrcMw7gPxMxdtOrbDBR1cTdktjnq3fJ74/edit?tab=t.0", isPresented: $showPolicy)
+            .safari(urlString: "https://docs.google.com/document/d/1mjYIZDx4nG_EWMnGzIVArFQ1z2X7He7jNUkeEi8pSic/edit?usp=sharing", isPresented: $showTerms)
     }
     
     private var content: some View {
@@ -150,49 +148,55 @@ struct SettingsView: View {
                     Text("Settings")
                         .font(.interSemiBold(size: 26))
                         .foregroundStyle(.black101010)
+                        .fixedSize()
                     
-                    Spacer()
+                    Spacer(minLength: 8)
                     
                     HStack(spacing: 8) {
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(.orangeF86B0D)
-                            .frame(width: 67, height: 40)
-                            .overlay {
-                                HStack {
-                                    Image(.generateIcon)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                    
-                                    Text("\(viewModel.imageTokens)")
-                                        .font(.interMedium(size: 16))
-                                        .foregroundStyle(.white)
-                                }
-                            }
+                        HStack(spacing: 4) {
+                            Image(.generateIcon)
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                            
+                            Text("\(viewModel.imageTokens)")
+                                .font(.interMedium(size: 16))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 24)
+                                .fill(.orangeF86B0D)
+                        )
                         
-                        
-                        RoundedRectangle(cornerRadius: 24)
-                            .fill(.purple892FFF)
-                            .frame(width: 67, height: 40)
-                            .overlay {
-                                HStack {
-                                    Image(.whiteAvatarIcon)
-                                        .resizable()
-                                        .frame(width: 20, height: 20)
-                                    
-                                    Text("\(viewModel.avatarTokens)")
-                                        .font(.interMedium(size: 16))
-                                        .foregroundStyle(.white)
-                                }
-                            }
+                        HStack(spacing: 4) {
+                            Image(.whiteAvatarIcon)
+                                .resizable()
+                                .frame(width: 20, height: 20)
+                            
+                            Text("\(viewModel.avatarTokens)")
+                                .font(.interMedium(size: 16))
+                                .foregroundStyle(.white)
+                                .lineLimit(1)
+                                .minimumScaleFactor(0.7)
+                        }
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 12)
+                        .background(
+                            RoundedRectangle(cornerRadius: 24)
+                                .fill(.purple892FFF)
+                        )
                     }
                 }
                 .padding(.bottom, 32.fitH)
-
+                
                 ScrollView(.horizontal, showsIndicators: false) {
                     HStack(spacing: 24) {
                         VStack(spacing: 8) {
                             Button {
-                                if PurchaseManager.shared.isSubscribed {
+                                if Apphud.hasPremiumAccess() {
                                     viewModel.pushToCreateAvatar()
                                 } else {
                                     showPaywall = true
@@ -287,7 +291,7 @@ struct SettingsView: View {
             .frame(height: 52)
             .contentShape(Rectangle())
             .onTapGesture {
-                if PurchaseManager.shared.isSubscribed {
+                if Apphud.hasPremiumAccess() {
                     showAlert = true
                 } else {
                     showPaywall = true
@@ -347,9 +351,7 @@ struct SettingsView: View {
             .frame(height: 52)
             .contentShape(Rectangle())
             .onTapGesture {
-                webTitle = "Terms of Use"
-                webURL = URL(string: "https://docs.google.com/document/d/1sM80Feufp8jTebygWDq-rj00Ju19fRSkI9GWaodUeRA/edit?usp=sharing")
-                showWebView = true
+                showTerms = true
             }
             
             Divider()
@@ -375,9 +377,7 @@ struct SettingsView: View {
             .frame(height: 52)
             .contentShape(Rectangle())
             .onTapGesture {
-                webTitle = "Privacy Policy"
-                webURL = URL(string: "https://docs.google.com/document/d/1l17QMMa0Hjz4ycyAGM9Qj_yIL-Zt-qSAqYW2qdHucW4/edit?usp=sharing")
-                showWebView = true
+                showPolicy = true
             }
             
             Divider()

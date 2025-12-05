@@ -11,7 +11,6 @@ final class PurchaseManager: ObservableObject {
     @Published var subscriptions: [ApphudProduct] = []
     @Published var tokens: [Product] = []
     @Published var avatars: [Product] = []
-    @Published var isSubscribed: Bool = false
     @Published var isLoading = false
     @Published var errorMessage: String?
     @Published var alert: IdentifiableAlert?
@@ -69,8 +68,6 @@ final class PurchaseManager: ObservableObject {
         for s in subscriptions {
             print("• \(s.productId) \(s.localizedPrice)")
         }
-        
-        isSubscribed = Apphud.hasPremiumAccess()
     }
         
     // MARK: - PURCHASE
@@ -82,7 +79,6 @@ final class PurchaseManager: ObservableObject {
             }
             if result.subscription?.isActive() == true {
                 print("✅ Подписка активна: \(product.productId)")
-                self.isSubscribed = true
                 ApphudUserManager.shared.saveCurrentUserIfNeeded()
                 self.alert = IdentifiableAlert(message: "Purchase success")
             } else {
@@ -113,7 +109,6 @@ final class PurchaseManager: ObservableObject {
                 return
             }
             let active = subs?.contains(where: { $0.isActive() }) ?? false
-            self.isSubscribed = active
             ApphudUserManager.shared.saveCurrentUserIfNeeded()
             print("🔄 Apphud restore complete — active: \(active)")
         }

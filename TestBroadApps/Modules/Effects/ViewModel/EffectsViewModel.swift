@@ -7,6 +7,7 @@
 
 import Combine
 import SwiftUI
+import ApphudSDK
 
 final class EffectsViewModel: ObservableObject {
     private let router: Router
@@ -22,16 +23,22 @@ final class EffectsViewModel: ObservableObject {
 
         Task(priority: .userInitiated) {
             await services.templateManager.prepareTemplates()
+
             await MainActor.run {
                 self.categories = services.templateManager.getTemplates()
-                checkPaywallCondition()
             }
+
+            // ⏳ Делаем паузу перед проверкой
+            try? await Task.sleep(nanoseconds: 10_000_000_000) // 10 секунд
+
+            await checkPaywallCondition()
         }
     }
 
+
     @MainActor
     private func checkPaywallCondition() {
-        if !purchaseManager.isSubscribed {
+        if !Apphud.hasPremiumAccess() {
             print("🟠 Нет подписки — показываем Paywall")
             showPaywall = true
         } else {
@@ -46,7 +53,7 @@ final class EffectsViewModel: ObservableObject {
 
     @MainActor
     func tapItem(item: Template) {
-        if PurchaseManager.shared.isSubscribed {
+        if Apphud.hasPremiumAccess() {
             let url = item.preview
             router.push(.photoGen(url, item.promptTemplate, item.id))
         } else {

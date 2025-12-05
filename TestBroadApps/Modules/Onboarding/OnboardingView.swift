@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import StoreKit
 
 struct OnboardingView: View {
     
@@ -162,6 +163,7 @@ struct OnboardingView: View {
             
             Button {
                 step = 3
+                requestReviewOrOpenStore()
             } label: {
                 RoundedRectangle(cornerRadius: 24)
                     .fill(.orangeF86B0D)
@@ -244,11 +246,14 @@ struct OnboardingView: View {
         }
         .padding(.top, 8)
         .padding(.horizontal)
-//        .background(
-//            RoundedRectangle(cornerRadius: 12)
-//                .fill(Color.white.opacity(0.9))
-//                .shadow(color: .black.opacity(0.06), radius: 6, x: 0, y: 3)
-//        )
+    }
+    
+    func requestReviewOrOpenStore() {
+        if let scene = UIApplication.shared.connectedScenes
+            .compactMap({ $0 as? UIWindowScene })
+            .first(where: { $0.activationState == .foregroundActive }) {
+            SKStoreReviewController.requestReview(in: scene)
+        }
     }
 }
 

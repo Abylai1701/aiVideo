@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import ApphudSDK
 
 struct SeeAllView: View {
     
@@ -38,7 +39,7 @@ struct SeeAllView: View {
                     
                     Spacer()
 
-                    if !PurchaseManager.shared.isSubscribed {
+                    if !Apphud.hasPremiumAccess() {
                         Button {
                             viewModel.showPaywall = true
                         } label: {

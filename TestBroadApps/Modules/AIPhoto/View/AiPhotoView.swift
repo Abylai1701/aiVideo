@@ -7,6 +7,7 @@
 
 import SwiftUI
 import Kingfisher
+import ApphudSDK
 
 struct AiPhotoView: View {
     
@@ -105,7 +106,7 @@ struct AiPhotoView: View {
             .presentationDragIndicator(.hidden)
         }
         .onAppear {
-            if PurchaseManager.shared.isSubscribed {
+            if Apphud.hasPremiumAccess() {
                 Task {
                     await viewModel.fetchUserInfo()
                 }
@@ -114,7 +115,7 @@ struct AiPhotoView: View {
             }
         }
         .fullScreenCover(isPresented: $showPaywall) {
-            if !PurchaseManager.shared.isSubscribed {
+            if !Apphud.hasPremiumAccess() {
                 viewModel.popToRoot()
             }
         } content: {

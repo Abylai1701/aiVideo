@@ -140,7 +140,6 @@ struct PaywallView: View {
             }
             .padding(.bottom, 8)
             
-            // Yearly
             SubscriptionOptionView(
                 title: "Yearly",
                 subtitle: "$3 per month",

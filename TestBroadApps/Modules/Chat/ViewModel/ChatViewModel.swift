@@ -10,6 +10,7 @@ import PhotosUI
 import Alamofire
 import Kingfisher
 import Combine
+import ApphudSDK
 
 final class ChatViewModel: ObservableObject {
     
@@ -30,6 +31,7 @@ final class ChatViewModel: ObservableObject {
 
     @MainActor @Published var currentMessages: [Message] = []
     @Published var showTokenPaywall = false
+    @Published var showPaywall = false
 
     @MainActor
     init(router: Router, network: NetworkService = NetworkService()) {
@@ -72,58 +74,59 @@ final class ChatViewModel: ObservableObject {
     }
 
     func sendMessage(_ text: String) {
-        
-        
-        let canWeStart = checkTokens()
-        
-        guard canWeStart else {
-            showTokenPaywall = true
-            return
-        }
-        
-        Task { @MainActor in
-            let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
-            guard !trimmed.isEmpty || !self.selectedImages.isEmpty else { return }
-
-            let chat = self.ensureChat()
-
-            // 1) Добавляем сообщения в UI
-            self.store.addMessage(Message(text: trimmed, isUser: true), to: chat)
-
-            var imageData: Data?
-            if let uiImage = self.selectedImages.first?.image {
-                imageData = uiImage.jpegData(compressionQuality: 0.8)
-                self.store.addMessage(Message(text: "", isUser: true, imageData: imageData), to: chat)
+        if Apphud.hasPremiumAccess() {
+            let canWeStart = checkTokens()
+            
+            guard canWeStart else {
+                showTokenPaywall = true
+                return
             }
-
-            self.selectedImages.removeAll()
-            self.selectedChat = chat
-            self.isLoading = true
-            self.refreshCurrentMessages()
-
-//             3) Всё тяжёлое — в фоне
-            Task.detached { [weak self] in
-                guard let self else { return }
-                do {
-                    let aspect = await self.aspectRatio.value
-                    let response = try await self.uploadPrompt(
-                        lastMessages: chat.messages,
-                        text: trimmed,
-                        imageData: imageData,
-                        aspectRatio: aspect
-                    )
-                    await fetchUserInfo()
-                    try await self.pollGenerationStatus(id: response.id, chat: chat)
-                } catch {
-                    await MainActor.run {
-                        self.store.addMessage(
-                            Message(text: "❌ Error: \(error.localizedDescription)", isUser: false),
-                            to: chat
+            
+            Task { @MainActor in
+                let trimmed = text.trimmingCharacters(in: .whitespacesAndNewlines)
+                guard !trimmed.isEmpty || !self.selectedImages.isEmpty else { return }
+                
+                let chat = self.ensureChat()
+                
+                // 1) Добавляем сообщения в UI
+                self.store.addMessage(Message(text: trimmed, isUser: true), to: chat)
+                
+                var imageData: Data?
+                if let uiImage = self.selectedImages.first?.image {
+                    imageData = uiImage.jpegData(compressionQuality: 0.8)
+                    self.store.addMessage(Message(text: "", isUser: true, imageData: imageData), to: chat)
+                }
+                
+                self.selectedImages.removeAll()
+                self.selectedChat = chat
+                self.isLoading = true
+                self.refreshCurrentMessages()
+                
+                Task.detached { [weak self] in
+                    guard let self else { return }
+                    do {
+                        let aspect = await self.aspectRatio.value
+                        let response = try await self.uploadPrompt(
+                            lastMessages: chat.messages,
+                            text: trimmed,
+                            imageData: imageData,
+                            aspectRatio: aspect
                         )
-                        self.isLoading = false
+                        await fetchUserInfo()
+                        try await self.pollGenerationStatus(id: response.id, chat: chat)
+                    } catch {
+                        await MainActor.run {
+                            self.store.addMessage(
+                                Message(text: "❌ Error: \(error.localizedDescription)", isUser: false),
+                                to: chat
+                            )
+                            self.isLoading = false
+                        }
                     }
                 }
             }
+        } else {
+            showPaywall = true
         }
     }
 

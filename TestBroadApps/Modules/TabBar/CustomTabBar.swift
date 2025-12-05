@@ -67,6 +67,8 @@ struct CustomTabBar: View {
                     .padding(.top, 6)
                     .onTapGesture {
                         router.selectedTab = tab
+                        // Показываем таббар, если путь текущего таба пуст
+                        router.updateTabBarVisibility()
                     }
                     Spacer()
                 }

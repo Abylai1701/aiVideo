@@ -59,7 +59,7 @@ struct ChatView: View {
                         let text = inputText
                         inputText = ""
                         Task {
-                            viewModel.sendMessage(text)
+                            await viewModel.sendMessage(text)
                         }
                     },
                     selectType: { showSheet = true }
@@ -119,6 +119,9 @@ struct ChatView: View {
             .presentationDetents([.height(510)])
             .presentationCornerRadius(32)
             .presentationDragIndicator(.hidden)
+        }
+        .fullScreenCover(isPresented: $viewModel.showPaywall) {
+            PaywallView()
         }
         .photosPicker(
             isPresented: $viewModel.showPhotoPicker,
