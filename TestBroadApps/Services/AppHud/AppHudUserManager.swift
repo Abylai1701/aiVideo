@@ -26,6 +26,7 @@ final class ApphudUserManager {
         } else {
             Apphud.start(apiKey: "app_4LtbmsJR6kHZqHRroJS21FuDgSZNiZ")
             print("🕓 Apphud started anonymously")
+            saveCurrentUserIfNeeded()
         }
         Task {
             await PurchaseManager.shared.loadAllProducts()

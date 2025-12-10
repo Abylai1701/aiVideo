@@ -17,9 +17,8 @@ struct PaywallView: View {
     @State private var animationActive = true
     @State private var selectedSubscriptionID: String = "yearly_39.99_nottrial"
 
-    @State private var showWebView = false
-    @State private var webTitle = ""
-    @State private var webURL: URL? = nil
+    @State private var showPolicy = false
+    @State private var showTerms = false
     
     private let images: [ImageResource] = [.pw1, .pw2, .pw3, .pw4]
     
@@ -71,11 +70,8 @@ struct PaywallView: View {
         .overlay(alignment: .top) {
             header
         }
-        .fullScreenCover(isPresented: $showWebView) {
-            if let webURL {
-                SafariWebView(url: webURL)
-            }
-        }
+        .safari(urlString: "https://docs.google.com/document/d/1l17QMMa0Hjz4ycyAGM9Qj_yIL-Zt-qSAqYW2qdHucW4/edit?usp=sharing", isPresented: $showPolicy)
+        .safari(urlString: "https://docs.google.com/document/d/1sM80Feufp8jTebygWDq-rj00Ju19fRSkI9GWaodUeRA/edit?usp=sharing", isPresented: $showTerms)
         .alert(item: $viewModel.alert) { alert in
             if alert.message == "Purchase success" {
                  return Alert(
@@ -83,7 +79,6 @@ struct PaywallView: View {
                      message: Text(""),
                      dismissButton: .default(Text("OK")) {
                          dismiss()
-                         ApphudUserManager.shared.saveCurrentUserIfNeeded()
                      }
                  )
              } else {
@@ -186,15 +181,11 @@ struct PaywallView: View {
                 switch action {
                     
                 case .terms:
-                    webTitle = "Terms of Use"
-                    webURL = URL(string: "https://docs.google.com/document/d/1sM80Feufp8jTebygWDq-rj00Ju19fRSkI9GWaodUeRA/edit?usp=sharing")
-                    withAnimation { showWebView = true }
+                    showTerms = true
                 case .restore:
                     Task { await viewModel.restore() }
                 case .privacy:
-                    webTitle = "Privacy Policy"
-                    webURL = URL(string: "https://docs.google.com/document/d/1l17QMMa0Hjz4ycyAGM9Qj_yIL-Zt-qSAqYW2qdHucW4/edit?usp=sharing")
-                    withAnimation { showWebView = true }
+                    showPolicy = true
                 }
             }
             .frame(maxWidth: .infinity)

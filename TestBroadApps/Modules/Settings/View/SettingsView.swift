@@ -135,8 +135,8 @@ struct SettingsView: View {
             .fullScreenCover(isPresented: $showPaywall) {
                 PaywallView()
             }
-            .safari(urlString: "https://docs.google.com/document/d/17e4wZQqOWohrcMw7gPxMxdtOrbDBR1cTdktjnq3fJ74/edit?tab=t.0", isPresented: $showPolicy)
-            .safari(urlString: "https://docs.google.com/document/d/1mjYIZDx4nG_EWMnGzIVArFQ1z2X7He7jNUkeEi8pSic/edit?usp=sharing", isPresented: $showTerms)
+            .safari(urlString: "https://docs.google.com/document/d/1l17QMMa0Hjz4ycyAGM9Qj_yIL-Zt-qSAqYW2qdHucW4/edit?usp=sharing", isPresented: $showPolicy)
+            .safari(urlString: "https://docs.google.com/document/d/1sM80Feufp8jTebygWDq-rj00Ju19fRSkI9GWaodUeRA/edit?usp=sharing", isPresented: $showTerms)
     }
     
     private var content: some View {

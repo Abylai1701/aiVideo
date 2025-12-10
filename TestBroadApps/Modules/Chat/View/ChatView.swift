@@ -38,15 +38,6 @@ struct ChatView: View {
                 
                 Spacer()
                 chat
-                
-                //
-                //                Text("Start creating\nyour next image")
-                //                    .multilineTextAlignment(.center)
-                //                    .font(.interSemiBold(size: 24))
-                //                    .foregroundStyle(.grayB9B9B9)
-                //                    .padding(.bottom, 16)
-                //
-                //                Spacer()
             }
             .frame(maxWidth: .infinity, maxHeight: .infinity)
             .background(.white)
@@ -79,6 +70,9 @@ struct ChatView: View {
         .onAppear {
             if viewModel.selectedChat == nil {
                 viewModel.selectedChat = viewModel.store.chats.first
+            }
+            Task {
+                await viewModel.fetchUserInfo()
             }
         }
         .hideKeyboardOnTap()

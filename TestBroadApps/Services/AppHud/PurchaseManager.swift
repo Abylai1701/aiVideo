@@ -79,7 +79,6 @@ final class PurchaseManager: ObservableObject {
             }
             if result.subscription?.isActive() == true {
                 print("✅ Подписка активна: \(product.productId)")
-                ApphudUserManager.shared.saveCurrentUserIfNeeded()
                 self.alert = IdentifiableAlert(message: "Purchase success")
             } else {
                 print("⚠️ Подписка не активна")
@@ -109,7 +108,6 @@ final class PurchaseManager: ObservableObject {
                 return
             }
             let active = subs?.contains(where: { $0.isActive() }) ?? false
-            ApphudUserManager.shared.saveCurrentUserIfNeeded()
             print("🔄 Apphud restore complete — active: \(active)")
         }
         

@@ -209,6 +209,7 @@ final class CreateAvatarViewModel: ObservableObject {
                 await fetchUserInfo()
                 return response
             case "error":
+                NotificationCenter.default.post(name: .didFinishAvatarCreate, object: nil)
                 throw NSError(domain: "AvatarGeneration", code: -1, userInfo: [
                     NSLocalizedDescriptionKey: response.error ?? "Ошибка генерации"
                 ])
@@ -216,6 +217,7 @@ final class CreateAvatarViewModel: ObservableObject {
                 try await Task.sleep(for: .seconds(2))
                 attempt += 1
             default:
+                NotificationCenter.default.post(name: .didFinishAvatarCreate, object: nil)
                 throw NSError(domain: "AvatarGeneration", code: -2, userInfo: [
                     NSLocalizedDescriptionKey: "Неизвестный статус: \(response.status)"
                 ])
