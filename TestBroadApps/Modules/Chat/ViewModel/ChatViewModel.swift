@@ -42,11 +42,18 @@ final class ChatViewModel: ObservableObject {
             await self.fetchUserInfo()
         }
         store.$chats
-             .receive(on: DispatchQueue.main)
-             .sink { [weak self] _ in
-                 self?.refreshCurrentMessages()
-             }
-             .store(in: &cancellables)
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] chats in
+                guard let self else { return }
+
+                if let selectedId = self.selectedChat?.id {
+                    self.selectedChat = chats.first(where: { $0.id == selectedId })
+                }
+
+                self.refreshCurrentMessages()
+            }
+            .store(in: &cancellables)
+
 
          $selectedChat
              .receive(on: DispatchQueue.main)

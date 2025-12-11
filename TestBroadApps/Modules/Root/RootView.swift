@@ -22,6 +22,8 @@ struct RootView: View {
     @State private var showOnboarding = false
     @State private var isSidebarOpen = false
 
+    @State private var isSplashVisible: Bool = true
+
     // MARK: - Init
     init(services: ServiceLayer) {
         self.services = services
@@ -131,6 +133,12 @@ struct RootView: View {
                         showOnboarding = false
                     }
                 }
+            }
+            
+            if isSplashVisible {
+                SplashScreen(isVisible: $isSplashVisible)
+                    .transition(.opacity)
+                    .zIndex(1)
             }
         }
         .onAppear {

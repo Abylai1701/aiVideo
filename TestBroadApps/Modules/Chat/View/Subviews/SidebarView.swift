@@ -84,47 +84,50 @@ struct SidebarView: View {
                 .padding(.leading)
                 .padding(.bottom)
 
-            VStack {
-                ForEach(viewModel.store.chats) { chat in
-                    HStack(spacing: 10) {
-                        Text(chat.title)
-                            .lineLimit(1)
-                            .font(.interMedium(size: 16))
-                            .foregroundStyle(.black101010)
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                viewModel.selectedChat = chat
-                                close()
-                            }
-
-                        Spacer()
-
-                        // MARK: - More menu
-                        Menu {
-                            Button {
-                                chatToRename = chat
-                                newTitle = chat.title
-                            } label: {
-                                Label("Rename", systemImage: "pencil")
-                            }
-
-                            Button(role: .destructive) {
-                                chatToDelete = chat
-                            } label: {
-                                Label("Delete", systemImage: "trash")
-                            }
-                        } label: {
-                            Image(.moreIcon)
-                                .resizable()
-                                .frame(width: 20, height: 20)
+            // 🔽 вот тут меняем VStack на ScrollView + LazyVStack
+            ScrollView {
+                LazyVStack(spacing: 0) {
+                    ForEach(viewModel.store.chats) { chat in
+                        HStack(spacing: 10) {
+                            Text(chat.title)
+                                .lineLimit(1)
+                                .font(.interMedium(size: 16))
+                                .foregroundStyle(.black101010)
                                 .contentShape(Rectangle())
+                                .onTapGesture {
+                                    viewModel.selectedChat = chat
+                                    close()
+                                }
+
+                            Spacer()
+
+                            Menu {
+                                Button {
+                                    chatToRename = chat
+                                    newTitle = chat.title
+                                } label: {
+                                    Label("Rename", systemImage: "pencil")
+                                }
+
+                                Button(role: .destructive) {
+                                    chatToDelete = chat
+                                } label: {
+                                    Label("Delete", systemImage: "trash")
+                                }
+                            } label: {
+                                Image(.moreIcon)
+                                    .resizable()
+                                    .frame(width: 20, height: 20)
+                                    .contentShape(Rectangle())
+                            }
+                            .buttonStyle(.plain)
                         }
-                        .buttonStyle(.plain)
+                        .frame(height: 36)
                     }
-                    .frame(height: 36)
                 }
+                .padding(.horizontal)
             }
-            .padding(.horizontal)
+
 
             Spacer()
 
