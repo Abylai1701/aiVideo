@@ -286,7 +286,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3847K57V35;
+				DEVELOPMENT_TEAM = 2HC55LUZ6X;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TestBroadApps/Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Video Generator";
@@ -321,7 +321,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 3847K57V35;
+				DEVELOPMENT_TEAM = 2HC55LUZ6X;
 				ENABLE_PREVIEWS = YES;
 				INFOPLIST_FILE = TestBroadApps/Source/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Video Generator";
